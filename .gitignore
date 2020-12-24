@@ -1,0 +1,5 @@
+# Local environment
+.env
+
+# Compiled assets
+dist/
