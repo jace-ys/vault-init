@@ -4,7 +4,7 @@ build:
 	go build -o dist/vault-init ./cmd/vault-init/...
 
 image:
-	docker build -t vault-init:latest .
+	docker build -t vault-init:v0.0.0 .
 
 fmt:
 	go fmt ./...

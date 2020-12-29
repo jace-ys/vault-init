@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-secret
+  labels:
+    app: example
+data:
+  local-encryption-secret-key: RmphVUNxcVRJb3JHVGUxWjg2cnMyWWZrUmdRNmlJZ28=
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+data:
+  config.hcl: |
+    listener "tcp" {
+      address = "0.0.0.0:8200"
+      cluster_address = "0.0.0.0:8201"
+      tls_disable = true
+    }
+
+    storage "file" {
+      path = "/vault/data"
+    }
+
+    disable_mlock = true
+
+    api_addr = "http://127.0.0.1:8200"
+    ui = true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: example
+  labels:
+    app: example
+spec:
+  ports:
+    - port: 8200
+      protocol: TCP
+  selector:
+    app: example
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: example
+  labels:
+    app: example
+spec:
+  serviceName: example
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      volumes:
+        - name: vault-config
+          configMap:
+            name: example-configmap
+      containers:
+        - name: vault
+          image: vault:1.6.1
+          args:
+            - server
+            - -config=/etc/vault/config
+          volumeMounts:
+            - name: vault-config
+              mountPath: /etc/vault/config
+        - name: vault-init
+          image: jaceys/vault-init:v0.1.0
+          args:
+            - start
+          env:
+            - name: VAULT_ADDR
+              value: http://127.0.0.1:8200
+            - name: POSTGRES_STORAGE_CONNECTION_URL
+              value: postgres://example:example@example-postgres.default.svc.cluster.local:5432/example?sslmode=disable
+            - name: LOCAL_ENCRYPTION_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: example-secret
+                  key: local-encryption-secret-key

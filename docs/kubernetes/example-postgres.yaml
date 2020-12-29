@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-postgres-configmap
+  labels:
+    app: example-postgres
+data:
+  POSTGRES_DB: example
+  POSTGRES_USER: example
+  POSTGRES_PASSWORD: example
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-postgres
+  labels:
+    app: example-postgres
+spec:
+  ports:
+    - port: 5432
+      protocol: TCP
+  selector:
+    app: example-postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: example-postgres
+  labels:
+    app: example-postgres
+spec:
+  serviceName: example-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example-postgres
+  template:
+    metadata:
+      labels:
+        app: example-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13.1-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: example-postgres-configmap

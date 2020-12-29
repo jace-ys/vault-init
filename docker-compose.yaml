@@ -24,7 +24,7 @@ services:
 
   vault-init:
     build: .
-    image: vault-init:latest
+    image: vault-init:v0.0.0
     command: start
     depends_on:
       - postgres
