@@ -1,6 +1,17 @@
 version: "3.8"
 
 services:
+  postgres:
+    image: postgres:13.1-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./config/migrations:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: vault
+      POSTGRES_PASSWORD: vault
+      POSTGRES_DB: vault
+
   vault:
     image: vault:1.6.1
     command: vault server -config /vault/config
@@ -10,3 +21,15 @@ services:
       - 8200:8200
     volumes:
       - ./config/vault.hcl:/vault/config/default.hcl
+
+  vault-init:
+    build: .
+    image: vault-init:latest
+    command: start
+    depends_on:
+      - postgres
+      - vault
+    environment:
+      VAULT_ADDR: http://vault:8200
+      LOCAL_ENCRYPTION_SECRET_KEY: FjaUCqqTIorGTe1Z86rs2YfkRgQ6iIgo
+      POSTGRES_STORAGE_CONNECTION_URL: postgres://vault:vault@postgres:5432/vault?sslmode=disable
