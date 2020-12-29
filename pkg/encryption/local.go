@@ -10,6 +10,8 @@ import (
 	"io"
 )
 
+const LocalEncryptionVersion = "v1"
+
 type LocalEncryption struct {
 	SecretKey string
 }
@@ -26,6 +28,14 @@ func NewLocalEncryption(secretKey string) (*LocalEncryption, error) {
 	return &LocalEncryption{
 		SecretKey: secretKey,
 	}, nil
+}
+
+func (e *LocalEncryption) Type() string {
+	return "local"
+}
+
+func (e *LocalEncryption) Version() string {
+	return LocalEncryptionVersion
 }
 
 func (e *LocalEncryption) Encrypt(ctx context.Context, plaintext string) (string, error) {

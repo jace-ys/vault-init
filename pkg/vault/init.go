@@ -15,13 +15,22 @@ type VaultClient interface {
 }
 
 type EncryptionBackend interface {
+	Type() string
+	Version() string
 	Encrypt(ctx context.Context, plaintext string) (string, error)
 	Decrypt(ctx context.Context, data string) (string, error)
 }
 
 type StorageBackend interface {
-	WriteInitData(ctx context.Context, token string, keys []string) error
-	ReadInitData(ctx context.Context) (string, []string, error)
+	WriteInitData(ctx context.Context, data *InitData) error
+	ReadInitData(ctx context.Context) (*InitData, error)
+}
+
+type InitData struct {
+	EncryptionType    string
+	EncryptionVersion string
+	RootToken         string
+	UnsealKeys        []string
 }
 
 type VaultInit struct {
@@ -128,35 +137,40 @@ func (vi *VaultInit) initialize(ctx context.Context) error {
 		return err
 	}
 
-	encryptedRootToken, err := vi.encryption.Encrypt(ctx, initResponse.RootToken)
+	data := &InitData{
+		EncryptionType:    vi.encryption.Type(),
+		EncryptionVersion: vi.encryption.Version(),
+		UnsealKeys:        make([]string, len(initResponse.KeysBase64)),
+	}
+
+	data.RootToken, err = vi.encryption.Encrypt(ctx, initResponse.RootToken)
 	if err != nil {
 		return err
 	}
 
-	encryptedUnsealKeys := make([]string, len(initResponse.KeysBase64))
 	for i, unsealKey := range initResponse.KeysBase64 {
 		encrypted, err := vi.encryption.Encrypt(ctx, unsealKey)
 		if err != nil {
 			return err
 		}
-		encryptedUnsealKeys[i] = encrypted
+		data.UnsealKeys[i] = encrypted
 	}
 
-	return vi.storage.WriteInitData(ctx, encryptedRootToken, encryptedUnsealKeys)
+	return vi.storage.WriteInitData(ctx, data)
 }
 
 func (vi *VaultInit) unseal(ctx context.Context) error {
-	_, encryptedUnsealKeys, err := vi.storage.ReadInitData(ctx)
+	data, err := vi.storage.ReadInitData(ctx)
 	if err != nil {
 		return err
 	}
 
-	if len(encryptedUnsealKeys) == 0 {
+	if len(data.UnsealKeys) == 0 {
 		return fmt.Errorf("no unseal keys could be found")
 	}
 
-	unsealKeys := make([]string, len(encryptedUnsealKeys))
-	for i, encryptedUnsealKey := range encryptedUnsealKeys {
+	unsealKeys := make([]string, len(data.UnsealKeys))
+	for i, encryptedUnsealKey := range data.UnsealKeys {
 		decrypted, err := vi.encryption.Decrypt(ctx, encryptedUnsealKey)
 		if err != nil {
 			return err

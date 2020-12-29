@@ -66,18 +66,18 @@ func (c *ShowCommand) Execute() error {
 		return err
 	}
 
-	encryptedRootToken, encryptedUnsealKeys, err := storageBackend.ReadInitData(ctx)
+	data, err := storageBackend.ReadInitData(ctx)
 	if err != nil {
 		return err
 	}
 
-	rootToken, err := encryptionBackend.Decrypt(ctx, encryptedRootToken)
+	rootToken, err := encryptionBackend.Decrypt(ctx, data.RootToken)
 	if err != nil {
 		return err
 	}
 
-	unsealKeys := make([]string, len(encryptedUnsealKeys))
-	for i, encryptedUnsealKey := range encryptedUnsealKeys {
+	unsealKeys := make([]string, len(data.UnsealKeys))
+	for i, encryptedUnsealKey := range data.UnsealKeys {
 		decrypted, err := encryptionBackend.Decrypt(ctx, encryptedUnsealKey)
 		if err != nil {
 			return err
