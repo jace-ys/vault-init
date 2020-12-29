@@ -1,4 +1,4 @@
-.PHONY: build image fmt test
+.PHONY: build image fmt test clean
 
 build:
 	go build -o dist/vault-init ./cmd/vault-init/...
@@ -11,3 +11,7 @@ fmt:
 
 test:
 	go test -race -v ./...
+
+clean:
+	go clean ./...
+	rm -rf ./dist

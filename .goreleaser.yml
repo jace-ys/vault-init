@@ -1,0 +1,24 @@
+builds:
+  - id: vault-init
+    dir: cmd/vault-init
+    main: .
+    ldflags:
+      - -s -w -X main.Version={{ .Tag }}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+
+dockers:
+  - dockerfile: release.Dockerfile
+    image_templates:
+      - docker.io/jaceys/vault-init:{{ .Tag }}
+      - docker.io/jaceys/vault-init:latest
+
+changelog:
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

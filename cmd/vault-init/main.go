@@ -1,13 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"runtime"
 
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
+var (
+	Version = "dev"
+)
+
 func main() {
-	cli := kingpin.New("vault-init", "Automate the initialization and unsealing of HashiCorp Vault.")
+	cli := kingpin.New("vault-init", "Automate the initialization and unsealing of HashiCorp Vault.").Version(versionStanza())
 
 	startCmdClause := cli.Command("start", "Start the Vault initialization and unsealing process.")
 	startCmd := attachStartCommand(startCmdClause)
@@ -21,4 +27,8 @@ func main() {
 	case showCmdClause.FullCommand():
 		cli.FatalIfError(showCmd.Execute(), "show")
 	}
+}
+
+func versionStanza() string {
+	return fmt.Sprintf("Version: %s\nGo version: %s", Version, runtime.Version())
 }
