@@ -68,7 +68,7 @@ func attachStartCommand(cmd *kingpin.CmdClause) *StartCommand {
 }
 
 func (c *StartCommand) Run() error {
-	ctx, cancel := signals.SetupSignalHandler()
+	ctx, cancel := signals.SetupSignalContext()
 	defer cancel()
 
 	encryptionBackend, err := encryption.UseBackend(c.Encryption)

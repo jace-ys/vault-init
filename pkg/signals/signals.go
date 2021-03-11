@@ -7,20 +7,20 @@ import (
 	"syscall"
 )
 
-func SetupSignalHandler() (context.Context, context.CancelFunc) {
+func SetupSignalContext() (context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
 		select {
-		case <-c:
+		case <-sigc:
 			cancel()
 		case <-ctx.Done():
 		}
 
-		<-c
+		<-sigc
 		os.Exit(1)
 	}()
 
