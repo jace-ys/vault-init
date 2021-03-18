@@ -27,7 +27,7 @@ Pre-compiled `vault-init` binaries for various platforms can be found under the 
 
 #### Source
 
-Clone this repository and build the binary from source using the given Makefile (requires `go 1.15+`):
+Clone this repository and build the binary from source using the given Makefile (requires `go 1.16+`):
 
 ```shell
 $ make

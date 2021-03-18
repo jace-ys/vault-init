@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/url"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
-
-	"github.com/jace-ys/vault-init/pkg/signals"
 
 	"gopkg.in/alecthomas/kingpin.v2"
 
@@ -68,8 +70,15 @@ func attachStartCommand(cmd *kingpin.CmdClause) *StartCommand {
 }
 
 func (c *StartCommand) Run() error {
-	ctx, cancel := signals.SetupSignalContext()
-	defer cancel()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	go func() {
+		select {
+		case <-ctx.Done():
+			stop()
+		}
+	}()
 
 	encryptionBackend, err := encryption.UseBackend(c.Encryption)
 	if err != nil {
