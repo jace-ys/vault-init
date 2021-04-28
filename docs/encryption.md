@@ -10,7 +10,7 @@ The `local` encryption backend uses the [AES-GCM encryption algorithm](https://w
 
 #### Configuration
 
-- `--local-encryption-secret-key`: The 32-byte secret key to use for encrypting root tokens and unseal keys.
+- `--encryption-local-secret-key`: The 32-byte secret key to use for encrypting root tokens and unseal keys.
 
 You can use [OpenSSL](https://www.openssl.org/) to generate a secure 32-byte secret key:
 

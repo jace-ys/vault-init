@@ -20,4 +20,4 @@ CREATE TABLE vault_init_data (
 
 #### Configuration
 
-- `--postgres-storage-connection-URL`: The URL to use for connecting to the Postgres server.
+- `--storage-postgres-connection-URL`: The URL to use for connecting to the Postgres server.

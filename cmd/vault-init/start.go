@@ -51,8 +51,8 @@ func attachStartCommand(cmd *kingpin.CmdClause) *StartCommand {
 		Default("local").
 		EnumVar(&start.Encryption.Name, "local")
 
-	cmd.Flag("local-encryption-secret-key", "The 32-byte secret key to use for encrypting root tokens and unseal keys.").
-		Envar("LOCAL_ENCRYPTION_SECRET_KEY").
+	cmd.Flag("encryption-local-secret-key", "The 32-byte secret key to use for encrypting root tokens and unseal keys.").
+		Envar("ENCRYPTION_LOCAL_SECRET_KEY").
 		PlaceHolder("SECRET-KEY").
 		StringVar(&start.Encryption.Local.SecretKey)
 
@@ -61,8 +61,8 @@ func attachStartCommand(cmd *kingpin.CmdClause) *StartCommand {
 		Default("postgres").
 		EnumVar(&start.Storage.Name, "postgres")
 
-	cmd.Flag("postgres-storage-connection-url", "The URL to use for connecting to the Postgres server.").
-		Envar("POSTGRES_STORAGE_CONNECTION_URL").
+	cmd.Flag("storage-postgres-connection-url", "The URL to use for connecting to the Postgres server.").
+		Envar("STORAGE_POSTGRES_CONNECTION_URL").
 		PlaceHolder("CONNECTION-URL").
 		URLVar(&start.Storage.Postgres.ConnectionURL)
 

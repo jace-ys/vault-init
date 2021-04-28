@@ -61,10 +61,11 @@ $ vault-init --help
 
 Configuration options can also be passed in as environment variables, using the uppercased snake-case version of the respective flag name (eg. `VAULT_ADDR` for `--vault-addr`).
 
-Most commands require you to specify the encryption and storage backend to use via the `--encryption` and `--storage` flag, respectively. Each backend has its own set of configuration options, with their names typically following the given pattern:
+Most commands require you to specify the encryption and storage backend to use via the `--encryption` and `--storage` flag, respectively. Each backend has its own set of configuration options, with their names typically following the given patterns:
 
 ```
---[backend-name]-[encryption|storage]-[flag-name]
+--encryption-[backend-name]-[flag-name]
+--storage-[backend-name]-[flag-name]
 ```
 
 You will need to specify the appropriate flags depending on the backends you have chosen. Full documentation on configuration options for each backend can be found in [`docs/encryption.md`](docs/encryption.md) and [`docs/storage.md`](docs/storage.md).

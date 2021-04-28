@@ -9,8 +9,8 @@ Run the `start` command to launch the daemon process that automatically initiali
 ```shell
 $ vault-init start \
   --vault-addr "http://127.0.0.1:8200" \
-  --local-encryption-secret-key "FjaUCqqTIorGTe1Z86rs2YfkRgQ6iIgo" \
-  --postgres-storage-connection-url "postgres://vault:vault@127.0.0.1:5432/vault?sslmode=disable"
+  --encryption-local-secret-key "FjaUCqqTIorGTe1Z86rs2YfkRgQ6iIgo" \
+  --storage-postgres-connection-url "postgres://vault:vault@127.0.0.1:5432/vault?sslmode=disable"
 ```
 
 ### `show`
@@ -19,8 +19,8 @@ Run the `show` command to fetch and decrypt the root token and unseal keys gener
 
 ```shell
 $ vault-init show \
-  --local-encryption-secret-key "FjaUCqqTIorGTe1Z86rs2YfkRgQ6iIgo" \
-  --postgres-storage-connection-url "postgres://vault:vault@127.0.0.1:5432/vault?sslmode=disable"
+  --encryption-local-secret-key "FjaUCqqTIorGTe1Z86rs2YfkRgQ6iIgo" \
+  --storage-postgres-connection-url "postgres://vault:vault@127.0.0.1:5432/vault?sslmode=disable"
 ```
 
 ## Docker

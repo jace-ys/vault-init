@@ -31,5 +31,5 @@ services:
       - vault
     environment:
       VAULT_ADDR: http://vault:8200
-      LOCAL_ENCRYPTION_SECRET_KEY: FjaUCqqTIorGTe1Z86rs2YfkRgQ6iIgo
-      POSTGRES_STORAGE_CONNECTION_URL: postgres://vault:vault@postgres:5432/vault?sslmode=disable
+      ENCRYPTION_LOCAL_SECRET_KEY: FjaUCqqTIorGTe1Z86rs2YfkRgQ6iIgo
+      STORAGE_POSTGRES_CONNECTION_URL: postgres://vault:vault@postgres:5432/vault?sslmode=disable
