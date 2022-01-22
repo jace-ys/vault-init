@@ -73,7 +73,7 @@ spec:
             - name: vault-config
               mountPath: /etc/vault/config
         - name: vault-init
-          image: jaceys/vault-init:v0.1.0
+          image: jaceys/vault-init:v0.2.0
           args:
             - start
           env:
